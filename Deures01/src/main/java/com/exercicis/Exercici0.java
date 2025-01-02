@@ -1,12 +1,8 @@
 package com.exercicis;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.Scanner;
 
 /**
     Introducció
@@ -74,8 +70,20 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testValidarNom"
      */
     public static boolean validarNom(String nom) {
-        // TODO
-        return false;
+        String name = nom.trim().toLowerCase();
+
+        if (name.isEmpty()) {
+            return false;
+        }
+
+        String abc = " abcdefghijklmnopqrstuvwxyzçáéíóúàèìòùäëïöü";
+
+        for (char c : name.toCharArray()) {
+            if (abc.indexOf(c) == -1) {
+                return false;
+            }
+        } 
+        return true;
     }
     
     /**
@@ -89,8 +97,7 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testValidarEdat"
      */
     public static boolean validarEdat(int edat) {
-        // TODO
-        return false;
+        return edat >= 18 && edat <= 100;
     }
 
     /**
@@ -111,8 +118,28 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testValidarFactors"
      */
     public static boolean validarFactors(String[] factors) {
-        // TODO
-        return false;
+        if (factors == null || factors.length != 2 ) {
+            return false;
+        }
+
+        String tipus = factors[0];
+        String risc = factors[1];
+
+        if (tipus == null || risc == null) {
+            return false;
+        }
+
+        if (!tipus.equals("autònom") && !tipus.equals("empresa")) {
+            return false;
+        }
+        if (!risc.equals("risc alt") && !risc.equals("risc mitjà") && !risc.equals("risc baix")) {
+            return false;
+        }
+        if (tipus.equals("autònom") && risc.equals("risc baix")) {
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -131,8 +158,8 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testValidarDescompte"
      */
     public static boolean validarDescompte(double descompte) {
-        // TODO
-        return false;
+        
+        return descompte >= 0 && descompte <= 20;
     }
 
     /**
@@ -156,7 +183,27 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testValidarTipusOperacio"
      */
     public static boolean validarTipusOperacio(String tipus) {
-        // TODO
+        if (tipus == null) {
+            return false;
+        }
+        
+        String[] tipusValids = {
+            "Declaració d'impostos",
+            "Gestió laboral",
+            "Assessoria fiscal",
+            "Constitució de societat",
+            "Modificació d'escriptures",
+            "Testament",
+            "Gestió d'herències",
+            "Acta notarial",
+            "Contracte de compravenda",
+            "Contracte de lloguer"
+        };
+        for(String tipusValid : tipusValids){
+            if (tipus.equals(tipusValid)){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -183,8 +230,22 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testValidarClients"
      */
     public static boolean validarClients(ArrayList<String> clientsLlista, ArrayList<String> clientsGlobals) {
-        // TODO
-        return false;
+        if (clientsLlista == null || clientsGlobals == null) {
+            return false;
+        }
+        for(int i = 0 ;i < clientsLlista.size(); i++) {
+            String client = clientsLlista.get(i);
+            if (clientsLlista.indexOf(client) != clientsLlista.lastIndexOf(client)) {
+                return false;
+            }
+        }
+        for(String client : clientsLlista) {
+            if (!clientsGlobals.contains(client)){
+                return false;
+
+            }
+        }
+        return true;
     }
 
     /**
