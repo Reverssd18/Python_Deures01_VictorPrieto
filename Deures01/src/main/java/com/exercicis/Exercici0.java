@@ -412,8 +412,16 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testAfegirClient"
      */
     public static String afegirClient(String nom, int edat, ArrayList<String> factors, double descompte) {
-        // TODO
-        return "";
+        String clauClient = generaClauClient();
+        HashMap<String, Object> dadesClient = new HashMap<>();
+        dadesClient.put("nom", nom);
+        dadesClient.put("edat", edat);
+        dadesClient.put("factors", factors);
+        dadesClient.put("descompte", descompte);
+
+        clients.put(clauClient, dadesClient);
+
+        return clauClient;
     }
 
     /**
@@ -441,8 +449,16 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testModificarClient"
      */
     public static String modificarClient(String clauClient, String camp, Object nouValor) {
-        // TODO
-        return "";
+        if (!clients.containsKey(clauClient)) {
+        return "Client '" + clauClient + "' no existeix.";
+        }
+        HashMap<String, Object> client = clients.get(clauClient);
+
+        if (!client.containsKey(camp)) {
+            return "El camp " + camp + " no existeix.";
+        }
+        client.put(camp, nouValor);
+        return "OK";
     }
 
     /**
@@ -463,8 +479,11 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testEsborrarClient"
      */
     public static String esborrarClient(String clauClient) {
-        // TODO
-        return "";
+        if (!clients.containsKey(clauClient)) {
+            return "Client amb clau " + clauClient + " no existeix.";
+        }
+        clients.remove(clauClient);
+        return "OK";
     }
 
     /**
@@ -483,8 +502,33 @@ public class Exercici0 {
             ArrayList<String> claus,
             HashMap<String, Object> condicions) {
 
-        // TODO
-        return null;
+        ArrayList<HashMap<String, HashMap<String, Object>>> clientsComplerts = new ArrayList<>();
+        
+        for (String clau : clients.keySet()) {
+            if (!claus.contains(clau)) {
+                continue;
+            }
+
+            HashMap<String, Object> dades = clients.get(clau);
+            boolean coincideix = true;
+
+            for (String key : condicions.keySet()) {
+                Object valorEsperat = condicions.get(key);
+
+                if (!dades.containsKey(key) || !dades.get(key).equals(valorEsperat)) {
+                    coincideix = false;
+                    break;
+                }
+            }
+
+            if (coincideix) {
+                HashMap<String, HashMap<String, Object>> valids = new HashMap<>();
+                valids.put(clau, dades);
+                clientsComplerts.add(valids);
+            }
+        }
+
+        return clientsComplerts;
     }
 
     /**
@@ -498,8 +542,24 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testGeneraClauOperacio"
      */
     public static String generaClauOperacio() {
-        // TODO
-        return "";
+        Random random = new Random();
+        String key;
+
+        boolean exist;
+        do { 
+            int numRandom = 100 + random.nextInt(900);
+            key = "operacio_" + numRandom;
+            exist = false;
+
+            for (HashMap<String,Object> operacio : operacions) {
+                if (key.equals(operacio.get("id"))) {
+                    exist = true;
+                    break;
+                }
+            }
+        } while (exist);
+
+        return key;
     }
 
     /**
@@ -529,9 +589,18 @@ public class Exercici0 {
             String data,
             String observacions,
             double preu) {
+        
+            String newId = generaClauOperacio();
+        HashMap<String, Object> novaOperacio = new HashMap<>();
+        novaOperacio.put("id", newId);
+        novaOperacio.put("tipus", tipus);
+        novaOperacio.put("clients", clientsImplicats);
+        novaOperacio.put("data", data);
+        novaOperacio.put("observacions", observacions);
+        novaOperacio.put("preu", preu);
+        operacions.add(novaOperacio);
 
-        // TODO
-        return "";
+        return newId;
     }
 
     /**
@@ -547,8 +616,17 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testModificarOperacio"
      */
     public static String modificarOperacio(String idOperacio, String camp, Object nouValor) {
-        // TODO
-        return "";
+        for(HashMap<String,Object> operacio : operacions) {
+            if(operacio.get("id").equals(idOperacio)) {
+                if (operacio.containsKey(camp)) {
+                    operacio.put(camp, nouValor);
+                    return "OK";
+                } else {
+                    return "El camp " + camp + " no existeix en l'operació.";
+                }
+            }
+        }
+        return "Operació amb id " + idOperacio + " no existeix.";
     }
 
     /**
@@ -562,8 +640,14 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testEsborrarOperacio"
      */
     public static String esborrarOperacio(String idOperacio) {
-        // TODO
-        return "";
+        for (int i = 0; i < operacions.size(); i++) {
+            HashMap<String, Object> operacio = operacions.get(i);
+            if (operacio.get("id").equals(idOperacio)) {
+                operacions.remove(i);
+                return "OK";
+            }
+        }
+        return "Operació amb id " + idOperacio + " no existeix.";
     }
 
     /**
