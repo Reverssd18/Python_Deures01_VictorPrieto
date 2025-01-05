@@ -703,8 +703,15 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testLlistarOperacionsClient"
      */
     public static ArrayList<HashMap<String, Object>> llistarOperacionsClient(String clauClient) {
-        // TODO
-        return null;
+        ArrayList<HashMap<String, Object>> result = new ArrayList<>();
+
+        for (HashMap<String, Object> operacio : operacions) {
+            ArrayList<String> clients = (ArrayList<String>) operacio.get("clients");
+            if (clients != null && clients.contains(clauClient)) {
+                result.add(operacio);
+            }
+        }
+        return result;
     }
 
     /**
@@ -734,8 +741,39 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testAlineaColumnes"
      */
     public static String alineaColumnes(ArrayList<Object[]> columnes) {
-        // TODO
-        return "";
+        StringBuilder sb = new StringBuilder ("\n");
+
+        for (Object[] col : columnes) {
+            String txt = (String) col[0];
+            String alineacio = (String) col[1];
+            int ample = (int) col[2];
+
+            if (txt.length() > ample) {
+                txt = txt.substring(0,ample);
+            }
+
+            int spaces = ample - txt.length();
+
+            switch (alineacio) {
+                case "left" :
+                    sb.append(txt);
+                    sb.append(" ".repeat(spaces));
+                    break;
+                case "right" :
+                    sb.append(" ".repeat(spaces));
+                    sb.append(txt);
+                case "center" :
+                    int spacesleft = spaces / 2;
+                    int spacesright = spaces - spacesleft;
+                    sb.append(" ".repeat(spacesleft));
+                    sb.append(txt);
+                    sb.append(" ".repeat(spacesright));
+                    break;
+            }
+        }
+
+        
+        return sb.toString();
     }
 
     /**
