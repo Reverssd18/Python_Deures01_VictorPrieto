@@ -667,8 +667,30 @@ public class Exercici0 {
             ArrayList<String> ids,
             HashMap<String, Object> condicions) {
 
-        // TODO
-        return null;
+        ArrayList<HashMap<String, Object>> resultat = new ArrayList<>();
+
+        for (HashMap<String, Object> operacio : operacions) {
+            if (ids != null && !ids.isEmpty() && !ids.contains(operacio.get("id"))) {
+                continue;
+            }
+
+            boolean coincideix = true;
+
+            if (condicions != null && !condicions.isEmpty()) {
+                for (String key : condicions.keySet()) {
+                    if (!operacio.containsKey(key) || !operacio.get(key).equals(condicions.get(key))) {
+                        coincideix = false;
+                        break;
+                    }
+                }
+            }
+
+            if (coincideix) {
+                resultat.add(operacio);
+            }
+        }
+
+        return resultat;
     }
 
     /**
