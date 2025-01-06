@@ -1,12 +1,6 @@
 package com.exercicis;
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.Scanner;
 
 /*
    Implementa una versió simplificada del joc 2048 en Java.
@@ -87,7 +81,18 @@ public class Exercici1 {
      * @test ./runTest.sh "com.exercicis.TestExercici1#testPrintBoardWithLargeNumbers"
      */
     public static void printBoard() {
-        // TODO
+        System.out.println("+----+----+----+----+");
+        for (int[] fila : board) {
+            for (int celda : fila) {
+                if ( celda == 0) {
+                    System.out.printf("|    ", celda == 0 ? "" : celda);
+                } else {
+                    System.out.printf("|%4d", celda == 0 ? "" : celda);
+                }
+            }
+            System.out.println("|");
+            System.out.println("+----+----+----+----+");
+        }
     }
 
     /**
@@ -102,7 +107,14 @@ public class Exercici1 {
      * @test ./runTest.sh "com.exercicis.TestExercici1#testSpawnDoNotOverwriteExisting"
      */
     public static void spawnTile() {
-        // TODO
+        int a , b;
+        do { 
+            a = random.nextInt(SIZE);
+            b = random.nextInt(SIZE);
+        } while (board[a][b] != 0);
+
+        board[a][b] = random.nextInt(10) == 0 ? 4 : 2;
+    
     }
 
     /**
@@ -140,7 +152,33 @@ public class Exercici1 {
      * @test ./runTest.sh "com.exercicis.TestExercici1#testMoveLeftFullRowWithoutMerge"
      */
     public static void moveLeft() {
-        // TODO
+        for (int fila = 0 ; fila < SIZE; fila++) {
+            int[] fila_nova = new int[SIZE];
+            int index_nova = 0;
+            for (int col = 0 ; col < SIZE; col++) {
+                if (board[fila][col]!= 0) {
+                    fila_nova[index_nova] = board[fila][col];
+                    index_nova++;
+                }
+            }
+            for (int i = 0 ; i < SIZE; i++) {
+                if (fila_nova[i] != 0 && fila_nova[i] == fila_nova[i + 1]) {
+                    fila_nova[i] *= 2;
+                    fila_nova[i + 1] = 0;
+                }
+            }
+            
+            int[] fila_final = new int[SIZE];
+            int finalIndex = 0;
+            for (int i = 0;i < SIZE; i++) {
+                if (fila_nova[i] != 0) {
+                    fila_final[finalIndex] = fila_nova[i];
+                    finalIndex++;
+                }
+            }
+            board[fila] = fila_final;
+        }
+
     }
 
     /**
