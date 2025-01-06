@@ -1,11 +1,8 @@
 package com.exercicis;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+
+
 
 /**
  * Introducció
@@ -1004,8 +1001,36 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testObtenirOpcio"
      */
     public static String obtenirOpcio(Scanner scanner) {
-        // TODO
-        return "";
+        ArrayList<String> menu = getCadenesMenu();
+
+        while (true) { 
+            System.out.print("Selecciona una opció (número o paraula clau): ");
+            String opc = scanner.nextLine();
+
+            try {
+                int index = Integer.parseInt(opc);
+                if (index == 0) {
+                    return "Sortir";
+                } else if (index > 0 && index < menu.size() - 1 ) {
+                    return menu.get(index).substring(3).trim();
+
+                }
+            } catch (NumberFormatException e) {
+            }
+            String opcN = opc.trim().toLowerCase().replace("ó","o");
+
+            for (int i = 0; i < menu.size(); i++) {
+                String keyword = menu.get(i).substring(3).trim();
+                String keywordN = keyword.toLowerCase().replace("ó", "o");
+
+                if (keywordN.equals(opcN)) {
+                    return keyword;
+                }
+                
+            }
+
+            System.out.println("Opció no vàlida. Torna a intentar-ho.");
+        } 
     }
 
     /**
@@ -1022,8 +1047,15 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testLlegirNom"
      */
     public static String llegirNom(Scanner scanner) {
-        // TODO
-        return "";
+        System.out.print("Introdueix el nom del client: ");
+        String name = scanner.nextLine().trim();
+
+        while (!validarNom(name)) {
+            System.out.println("Nom no vàlid. Només s'accepten lletres i espais.");
+            System.out.print("Introdueix el nom del client: ");
+            name = scanner.nextLine().trim();
+        }
+        return name;
     }
 
     /**
@@ -1040,8 +1072,16 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testLlegirEdat"
      */
     public static int llegirEdat(Scanner scanner) {
-        // TODO
-        return 0;
+        System.out.print("Introdueix l'edat del client (18-100): ");
+        String years_input = scanner.nextLine().trim();
+
+        while (!isAllDigits(years_input) || !validarEdat(Integer.parseInt(years_input))) {
+            System.out.println("Edat no vàlida. Introdueix un número entre 18 i 100.");
+            System.out.print("Introdueix l'edat del client (18-100): ");
+            years_input = scanner.nextLine().trim();
+
+        }
+        return Integer.parseInt(years_input);
     }
 
     /**
@@ -1063,8 +1103,36 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testLlegirFactors"
      */
     public static ArrayList<String> llegirFactors(Scanner scanner) {
-        // TODO
-        return null;
+        ArrayList<String> llegirFactors = new ArrayList<>();
+
+        System.out.print("Introdueix el primer factor ('autònom' o 'empresa'): ");
+        String factor1 = scanner.nextLine().trim().toLowerCase();
+        while (!factor1.equals("autònom") && !factor1.equals("empresa")) {
+            System.out.println("Factor no vàlid. Ha de ser 'autònom' o 'empresa'.");
+            System.out.print("Introdueix el primer factor ('autònom' o 'empresa'): ");
+            factor1 = scanner.nextLine().trim();
+        }
+        llegirFactors.add(factor1);
+
+        String factor2_txt = factor1.equals("autònom") 
+            ? "Introdueix el segon factor ('risc alt' o 'risc mitjà'): "
+            : "Introdueix el segon factor ('risc alt', 'risc baix' o 'risc mitjà'): ";
+
+        System.out.print(factor2_txt);
+        String factor2 = scanner.nextLine().trim();
+        while (true) { 
+            if (factor1.equals("autònom")) {
+                if (factor2.equals("risc alt") || factor2.equals("riosc mitjà")) break;
+                System.out.println("Factor no vàlid. Per a autònoms només pot ser 'risc alt' o 'risc mitjà'.");
+            } else {
+                if (factor2.equals("risc alt") || factor2.equals("risc baix") ||factor2.equals("risc mitjà")) break;
+                System.out.println("Factor no vàlid. Ha de ser 'risc alt', 'risc baix' o 'risc mitjà'.");
+            }
+            System.out.print(factor2_txt);
+            factor2 = scanner.nextLine().trim();
+        }
+        llegirFactors.add(factor2);
+        return llegirFactors;
     }
 
     /**
@@ -1081,8 +1149,16 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testLlegirDescompte"
      */
     public static double llegirDescompte(Scanner scanner) {
-        // TODO
-        return 0.0;
+        System.out.print("Introdueix el descompte (0-20): ");
+        String desc_input = scanner.nextLine().trim();
+
+        while (!desc_input.matches("\\d+(\\.\\d+)?") || !validarDescompte(Double.parseDouble(desc_input))) {
+            System.out.println("Descompte no vàlid. Ha de ser un número entre 0 i 20." );
+            System.out.print("Introdueix el descompte (0-20): ");
+            desc_input = scanner.nextLine().trim();
+        }
+    
+        return Double.parseDouble(desc_input);
     }
 
     /**
@@ -1115,8 +1191,22 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testAfegirClientMenu"
      */
     public static ArrayList<String> afegirClientMenu(Scanner scanner) {
-        // TODO
-        return null;
+        ArrayList<String> ln = new ArrayList<>();
+        ln.add("=== Afegir Client ===");
+    
+        String name = llegirNom(scanner);
+        int years = llegirEdat(scanner);
+        ArrayList<String> factors = llegirFactors(scanner);
+
+        if (!validarFactors(factors.toArray(new String[0]))) {
+            ln.add("Els factors no són vàlids.");
+            return ln;
+        }
+        double desc = llegirDescompte(scanner);
+
+        String newKey = afegirClient(name, years, factors, desc);
+        ln.add("S'ha afegit el client amb clau " + newKey + ".");
+        return ln;
     }
 
     /**
@@ -1160,8 +1250,45 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testModificarClientMenu"
      */
     public static ArrayList<String> modificarClientMenu(Scanner scanner) {
-        // TODO
-        return null;
+        ArrayList<String> ln = new ArrayList<>();
+        ln.add("=== Modificar Client ===");
+        
+        System.out.print("Introdueix la clau del client a modificar (per exemple, 'client_100'): ");
+        String clientKey = scanner.nextLine().trim();
+        if (!clients.containsKey(clientKey)) {
+            ln.add("Client amb clau " + clientKey + " no és vàlid.");
+            return ln;
+        }
+        ln.add("Camps disponibles per modificar: nom, edat, factors, descompte");
+        System.out.print("Introdueix el camp que vols modificar: ");
+        String field = scanner.nextLine().trim();
+        if (!Arrays.asList("nom","edat","factors","descompte").contains(field)) {
+            ln.add("El camp " + field + " no és vàlid.");
+            return ln;
+        }
+        Object new_valor = switch (field) {
+            case "nom" -> llegirNom(scanner);
+            case "edat" -> llegirEdat(scanner);
+            case "factors" -> {
+                ArrayList<String> factors = llegirFactors(scanner);
+                if (!validarFactors(factors.toArray(new String[0]))) {
+                    ln.add("Els factors no són vàlids.");
+                    yield factors;
+                }
+                yield factors;
+            }
+            case "descompte" -> llegirDescompte(scanner);
+            default -> null;
+        };
+        if (new_valor == null) return ln;
+
+        String result = modificarClient(clientKey, field, new_valor);
+        if (!result.equals("OK")) {
+            ln.add(result);
+        } else {
+            ln.add("S'ha modificat el client " + clientKey + ".");
+        }
+        return ln;
     }
 
     /**
@@ -1186,8 +1313,24 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testEsborrarClientMenu"
      */
     public static ArrayList<String> esborrarClientMenu(Scanner scanner) {
-        // TODO
-        return null;
+        ArrayList<String> ln = new ArrayList<String>();
+        ln.add("=== Esborrar Client ===");
+        
+        System.out.print("Introdueix la clau del client a esborrar(per exemple, 'client_100'): ");
+        String clientKey = scanner.nextLine().trim();
+
+        if (!clients.containsKey(clientKey)) {
+            ln.add("Client amb clau " + clientKey + " no existeix.");
+            return ln;
+        }
+        String result = esborrarClient(clientKey);
+        if (!result.equals("OK")) {
+            ln.add(result);
+        } else {
+            ln.add("S'ha esborrat el client " + clientKey + ".");
+        }
+
+        return ln;
     }
 
     /**
@@ -1209,8 +1352,37 @@ public class Exercici0 {
      * @param scanner L'objecte Scanner per llegir l'entrada de l'usuari.
      */
     public static void gestionaClientsOperacions(Scanner scanner) {
-        // TODO
+        ArrayList<String> menu = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<String>();
+        while (true) { 
+            clearScreen();
+            dibuixarLlista(menu);
+            dibuixarLlista(result);
+
+            String opc = obtenirOpcio(scanner);
+
+            switch (opc.toLowerCase(Locale.ROOT)) {
+                case "sortir":
+                    dibuixarLlista(new ArrayList<>(List.of("Fins aviat!")));
+                    break;
+                case "afegir client":
+                    result = afegirClientMenu(scanner);
+                    break;
+                case "modificar client":
+                    result = modificarClientMenu(scanner);
+                    break;
+                case "esborrar client":
+                    result = esborrarClientMenu(scanner);
+                    break;
+                case "llistar client":
+                    result = getLlistarClientsMenu();
+                    break;
+                default:
+                    result = new ArrayList<>(List.of("Opció no vàlida. Torna a intentar-ho."));
+            }
+        }
     }
+    
 
     /**
      * 
