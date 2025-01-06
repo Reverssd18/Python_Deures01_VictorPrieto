@@ -3,6 +3,7 @@ package com.exercicis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -828,8 +829,82 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testTaulaOperacionsClient2"
      */
     public static ArrayList<String> taulaOperacionsClient(String clauClient, String ordre) {
-        // TODO
-        return null;
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.US);
+
+            HashMap<String, Object> client = clients.get(clauClient);
+            if (client == null) {
+                ArrayList<String> error = new ArrayList<>();
+                error.add("Client amb clau " + clauClient + " no existeix.");
+                return error;
+            }
+            ArrayList<HashMap<String, Object>> operacionsClient = llistarOperacionsClient(clauClient);
+            operacionsClient.sort((primer, segon) -> {
+                Object v1 = primer.get(ordre);
+                Object v2 = segon.get(ordre);
+                return v1.toString().compareTo(v2.toString());
+            });
+
+            ArrayList<String> ln = new ArrayList<>();
+
+            String nom_edat = client.get("nom") + ", " + client.get("edat");
+            String facts = "[" + String.join(", ", (ArrayList<String>) client.get("factors")) + "]";
+            
+            ArrayList<Object[]> colCap = new ArrayList<>();
+            colCap.add(new Object[]{nom_edat, "left", 25});
+            colCap.add(new Object[]{facts, "right", 30});
+            ln.add(alineaColumnes(colCap));
+
+            ln.add("-".repeat(55));
+
+            ArrayList<Object[]> col_tittle = new ArrayList<>();
+            col_tittle.add(new Object[]{"Tipus", "left", 30});
+            col_tittle.add(new Object[]{"Data", "left", 10});
+            col_tittle.add(new Object[]{"Preu", "right", 10});
+            ln.add(alineaColumnes(col_tittle));
+
+            double suma_preu = 0;
+            for (HashMap<String, Object> op : operacionsClient) {
+                ArrayList<Object[]> col_op = new ArrayList<>();
+                col_op.add(new Object[]{op.get("tipus").toString(), "left", 30});
+                col_op.add(new Object[]{op.get("data").toString(), "left", 10});
+                
+                double preu = ((Number) op.get("preu")).doubleValue();
+                col_op.add(new Object[]{String.format("%.2f", preu), "right", 15});
+
+                ln.add(alineaColumnes(col_op));
+                suma_preu += preu;
+            }
+
+            ln.add("-".repeat(55));
+
+            int desc_perc = 10;
+            double perc = (100 - desc_perc);
+            double preu_desc = suma_preu * (perc / 100);
+            double imp = preu_desc * 0.21;
+            double total = preu_desc + imp;
+
+            ArrayList<Object[]> columnesTotals = new ArrayList<>();
+            columnesTotals.add(new Object[]{String.format("Suma: %.2f", suma_preu), "right", 55});
+            ln.add(alineaColumnes(columnesTotals));
+    
+      
+            ArrayList<Object[]> columnesDescompte = new ArrayList<>();
+            columnesDescompte.add(new Object[]{String.format("Descompte: %d%%", desc_perc), "left", 30});
+            columnesDescompte.add(new Object[]{String.format("Preu: %.2f", preu_desc), "right", 25});
+            ln.add(alineaColumnes(columnesDescompte));
+    
+         
+            ArrayList<Object[]> columnesImpostos = new ArrayList<>();
+            columnesImpostos.add(new Object[]{String.format("Impostos:  21%% (%.2f)", imp), "left", 30});
+            columnesImpostos.add(new Object[]{String.format("Total: %.2f", total), "right", 25});
+            ln.add(alineaColumnes(columnesImpostos));
+
+            return ln;
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
     }
 
     /**
@@ -873,8 +948,17 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testLlistarClientsMenu"
      */
     public static ArrayList<String> getLlistarClientsMenu() {
-        // TODO
-        return null;
+        ArrayList<String> ln = new ArrayList<String>();
+        ln.add("=== Llistar Clients ===");
+
+        if (clients.isEmpty()) {
+            ln.add("No hi ha clients per mostrar.");
+            return ln;
+        }
+        for (String key : clients.keySet()) {
+            ln.add(key + ": " + clients.get(key).toString());
+        }
+        return ln;
     }
 
     /**
@@ -885,7 +969,9 @@ public class Exercici0 {
      * @test ./runTest.sh "com.exercicis.TestExercici0#testDibuixarLlista"
      */
     public static void dibuixarLlista(ArrayList<String> llista) {
-        // TODO
+        for (String ln : llista) {
+            System.out.println(ln);
+        }
     }
 
     /**
